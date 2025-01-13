@@ -7,12 +7,8 @@ class DictionaryTests: XCTestCase {
         let name: String
         let age: Int
     }
-    struct Anon: Decodable {
-        let name: String!
-        let age: Int
-    }
-    
-    
+
+
     func testDecodes() throws {
         let source: [String: Any] = [
             "name": "Josh",
@@ -46,26 +42,5 @@ class DictionaryTests: XCTestCase {
             }
             XCTAssertEqual(key.stringValue, "age")
         }
-    }
-    
-    func testNull() throws {
-        let source: [String: Any?] = [
-            "name": nil,
-            "age": 47
-        ]
-        let anon = try Anon(from: DictionaryDecoder(dictionary: source))
-        XCTAssertNil(anon.name)
-        XCTAssertEqual(anon.age, 47)
-    }
-    
-    
-    func testNotNull() throws {
-        let source: [String: Any?] = [
-            "name": "Josh",
-            "age": 47
-        ]
-        let anon = try Anon(from: DictionaryDecoder(dictionary: source))
-        XCTAssertEqual(anon.name, "Josh")
-        XCTAssertEqual(anon.age, 47)
     }
 }

@@ -3,9 +3,9 @@ import Foundation
 
 
 public enum ContainerError: LocalizedError {
-    case couldNotDecodeIndex(index: Int, type: String)
+    case couldNotDecodeIndex(index: Int, type: Any.Type)
     case keyNotFound(key: CodingKey)
-    case couldNotDecodeKey(key: CodingKey, type: String)
+    case couldNotDecodeKey(key: CodingKey, type: Any.Type)
     case expectedNesting(key: CodingKey)
 
 }

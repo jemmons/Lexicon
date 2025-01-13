@@ -28,7 +28,7 @@ public extension DictionaryUnkeyedDecodingContainer {
         case let a as [Any]:
             return try T(from: DictionaryDecoder(array: a))
         default:
-            throw ContainerError.couldNotDecodeIndex(index: currentIndex, type: String(describing: type))
+            throw ContainerError.couldNotDecodeIndex(index: currentIndex, type: type)
         }
     }
 

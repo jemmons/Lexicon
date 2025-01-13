@@ -38,7 +38,7 @@ public extension DictionaryKeyedDecodingContainer {
         case let a as [Any]:
             return try T(from: DictionaryDecoder(array: a))
         default:
-            throw ContainerError.couldNotDecodeKey(key: key, type: String(describing: type))
+            throw ContainerError.couldNotDecodeKey(key: key, type: type)
         }
     }
     
