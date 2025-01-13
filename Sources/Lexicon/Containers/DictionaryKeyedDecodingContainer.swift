@@ -4,7 +4,7 @@ import Foundation
 
 public struct DictionaryKeyedDecodingContainer<Key>: KeyedDecodingContainerProtocol
 where Key: CodingKey {
-    private let dictionary: [String: Any]
+    private let dictionary: [String: Any?]
     
     
     public let codingPath: [any CodingKey] = []
@@ -13,7 +13,7 @@ where Key: CodingKey {
     }
     
     
-    public init(dictionary: [String: Any]) {
+    public init(dictionary: [String: Any?]) {
         self.dictionary = dictionary
     }
 }
@@ -22,19 +22,18 @@ where Key: CodingKey {
 
 public extension DictionaryKeyedDecodingContainer {    
     func contains(_ key: Key) -> Bool {
-        dictionary[key.stringValue] != nil
+        dictionary.keys.contains(key.stringValue)
     }
     
-    
+
     func decode<T>(_ type: T.Type, forKey key: Key) throws -> T where T : Decodable {
         guard dictionary.keys.contains(key.stringValue) else {
             throw ContainerError.keyNotFound(key: key)
         }
-        
         switch dictionary[key.stringValue] {
         case let t as T:
             return t
-        case let d as [String: Any]:
+        case let d as [String: Any?]:
             return try T(from: DictionaryDecoder(dictionary: d))
         case let a as [Any]:
             return try T(from: DictionaryDecoder(array: a))
@@ -45,7 +44,11 @@ public extension DictionaryKeyedDecodingContainer {
     
     
     func decodeNil(forKey key: Key) throws -> Bool {
-        false
+        guard let _exists = dictionary[key.stringValue],
+              let _ = _exists else {
+            return true
+        }
+        return false
     }
     
     

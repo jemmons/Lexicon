@@ -7,7 +7,7 @@ public struct DictionaryDecoder: Decoder {
     public let codingPath: [any CodingKey] = []
     public let userInfo: [CodingUserInfoKey : Any] = [:]
     
-    public init(dictionary: [String: Any]) {
+    public init(dictionary: [String: Any?]) {
         self.source = .dictionary(dictionary)
     }
     
@@ -48,7 +48,7 @@ public extension DictionaryDecoder {
 
 private extension DictionaryDecoder {
     enum DictionaryOrArray: CustomStringConvertible {
-        case dictionary([String: Any])
+        case dictionary([String: Any?])
         case array([Any])
         
         var description: String {
