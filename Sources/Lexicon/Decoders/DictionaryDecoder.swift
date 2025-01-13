@@ -4,16 +4,19 @@ import Foundation
 
 public struct DictionaryDecoder: Decoder {
     private let source: DictionaryOrArray
+    private let isStrict: Bool
     public let codingPath: [any CodingKey] = []
     public let userInfo: [CodingUserInfoKey : Any] = [:]
     
-    public init(dictionary: [String: Any?]) {
+    public init(dictionary: [String: Any?], isStrict: Bool = true) {
         self.source = .dictionary(dictionary)
+        self.isStrict = isStrict
     }
     
     
-    public init(array: [Any]) {
+    public init(array: [Any], isStrict: Bool = true) {
         self.source = .array(array)
+        self.isStrict = isStrict
     }
 }
 
@@ -23,7 +26,9 @@ public extension DictionaryDecoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         switch source {
         case let .dictionary(d):
-            return KeyedDecodingContainer(DictionaryKeyedDecodingContainer(dictionary: d))
+            return KeyedDecodingContainer(
+                DictionaryKeyedDecodingContainer(dictionary: d, isStrict: isStrict)
+            )
         case .array:
             throw DecoderError.expectedArray
         }

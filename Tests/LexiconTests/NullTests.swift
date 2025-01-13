@@ -32,11 +32,23 @@ class NullTests: XCTestCase {
     }
     
     
-    func testOmittedNull() throws {
+    func testOmittedNullThrowsInStrict() {
         let source: [String: Any?] = [
             "age": 47
         ]
-        let anon = try Anon(from: DictionaryDecoder(dictionary: source))
+        XCTAssertThrowsError(try Anon(from: DictionaryDecoder(dictionary: source))) { error in
+            guard case ContainerError.omittedInStrict = error else {
+                return XCTFail("unexpected error")
+            }
+        }
+    }
+
+    
+    func testOmittedNullAllowedInUnstrict() throws {
+        let source: [String: Any?] = [
+            "age": 47
+        ]
+        let anon = try Anon(from: DictionaryDecoder(dictionary: source, isStrict: false))
         XCTAssertNil(anon.name)
         XCTAssertEqual(anon.age, 47)
     }

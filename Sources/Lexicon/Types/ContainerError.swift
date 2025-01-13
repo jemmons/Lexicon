@@ -7,7 +7,7 @@ public enum ContainerError: LocalizedError {
     case keyNotFound(key: CodingKey)
     case couldNotDecodeKey(key: CodingKey, type: Any.Type)
     case expectedNesting(key: CodingKey)
-
+    case omittedInStrict
 }
 
 
@@ -23,6 +23,8 @@ public extension ContainerError {
             return "Could not decode value at key “\(k.stringValue)” to type “\(t)”."
         case .expectedNesting(let k):
             return "Expected a nested value at “\(k.stringValue)”, but dictionary must be flat."
+        case .omittedInStrict:
+            return "Strict mode does not allow for omitted optional values. Explicitly set to `nil` instead."
         }
     }
 }
