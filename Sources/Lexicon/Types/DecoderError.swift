@@ -2,7 +2,7 @@ import Foundation
 
 
 
-public enum DecoderError: LocalizedError {
+public enum DecoderError: LocalizedError, Equatable {
     case expectedSingleValue(String)
     case expectedArray
     case expectedDictionary

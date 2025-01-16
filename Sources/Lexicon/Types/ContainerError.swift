@@ -28,3 +28,25 @@ public extension ContainerError {
         }
     }
 }
+
+
+
+extension ContainerError: Equatable {
+    public static func == (lhs: ContainerError, rhs: ContainerError) -> Bool {
+        switch (lhs, rhs) {
+        case (.couldNotDecodeIndex, .couldNotDecodeIndex),
+            (.keyNotFound, .keyNotFound),
+            (.couldNotDecodeKey, .couldNotDecodeKey),
+            (.expectedNesting, .expectedNesting),
+            (.omittedInStrict, .omittedInStrict):
+            return true
+            
+        case (.couldNotDecodeIndex, _),
+            (.keyNotFound, _),
+            (.couldNotDecodeKey, _),
+            (.expectedNesting, _),
+            (.omittedInStrict, _):
+            return false
+        }
+    }
+}

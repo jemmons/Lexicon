@@ -1,72 +1,68 @@
+import Testing
 import Lexicon
-import XCTest
 
 
-
-class NullTests: XCTestCase {
-    struct Anon: Decodable {
-        let name: String?
-        let age: Int
+private struct Anon: Decodable {
+    let name: String?
+    let age: Int
+    
+    enum CodingKeys: CodingKey {
+        case name
+        case age
     }
-    
-    
-    func testNull() throws {
-        let source: [String: Any?] = [
-            "name": nil,
-            "age": 47
-        ]
-        let anon = try Anon(from: DictionaryDecoder(dictionary: source))
-        XCTAssertNil(anon.name)
-        XCTAssertEqual(anon.age, 47)
-    }
-    
-    
-    func testNotNull() throws {
-        let source: [String: Any?] = [
-            "name": "Josh",
-            "age": 47
-        ]
-        let anon = try Anon(from: DictionaryDecoder(dictionary: source))
-        XCTAssertEqual(anon.name, "Josh")
-        XCTAssertEqual(anon.age, 47)
-    }
-    
-    
-    func testOmittedNullThrowsInStrict() {
-        let source: [String: Any?] = [
-            "age": 47
-        ]
-        XCTAssertThrowsError(try Anon(from: DictionaryDecoder(dictionary: source))) { error in
-            guard case ContainerError.omittedInStrict = error else {
-                return XCTFail("unexpected error")
-            }
-        }
-    }
+}
 
     
-    func testOmittedNullAllowedInUnstrict() throws {
-        let source: [String: Any?] = [
-            "age": 47
-        ]
-        let anon = try Anon(from: DictionaryDecoder(dictionary: source, isStrict: false))
-        XCTAssertNil(anon.name)
-        XCTAssertEqual(anon.age, 47)
-    }
-
     
-    func testNullThrows() {
-        let source: [String: Any?] = [
-            "name": "Josh",
-            "age": nil,
-        ]
-        
-        XCTAssertThrowsError(try Anon(from: DictionaryDecoder(dictionary: source))) { error in
-            print(error.localizedDescription)
-            guard case let ContainerError.couldNotDecodeKey(key, type) = error else {
-                return XCTFail("unexpected error")
-            }
-            XCTAssertEqual(key.stringValue, "age")
-            XCTAssert(type is Int.Type)
-        }
+@Test func null() throws {
+    let source: [String: Any?] = [
+        "name": nil,
+        "age": 47
+    ]
+    let anon = try Anon(from: DictionaryDecoder(dictionary: source))
+    #expect(anon.name == nil)
+    #expect(anon.age == 47)
+}
+
+
+@Test func notNull() throws {
+    let source: [String: Any?] = [
+        "name": "Josh",
+        "age": 47
+    ]
+    let anon = try Anon(from: DictionaryDecoder(dictionary: source))
+    #expect(anon.name == "Josh")
+    #expect(anon.age == 47)
+}
+
+
+@Test func omittedNullThrowsInStrict() {
+    let source: [String: Any?] = [
+        "age": 47
+    ]
+    #expect(throws: ContainerError.omittedInStrict) {
+        try Anon(from: DictionaryDecoder(dictionary: source))
+    }
+}
+
+
+@Test func omittedNullAllowedInUnstrict() throws {
+    let source: [String: Any?] = [
+        "age": 47
+    ]
+    let anon = try Anon(from: DictionaryDecoder(dictionary: source, isStrict: false))
+    #expect(anon.name == nil)
+    #expect(anon.age == 47)
+}
+
+
+@Test func nullThrows() {
+    let source: [String: Any?] = [
+        "name": "Josh",
+        "age": nil,
+    ]
+    
+    #expect(throws: ContainerError.couldNotDecodeKey(key: Anon.CodingKeys.age, type: Int.self)) {
+        try Anon(from: DictionaryDecoder(dictionary: source))
     }
 }

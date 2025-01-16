@@ -1,46 +1,48 @@
-import XCTest
+import Testing
 import Lexicon
 
 
-class DictionaryTests: XCTestCase {
-    struct Person: Decodable {
-        let name: String
-        let age: Int
+private struct Anon {}
+
+private struct Person: Decodable {
+    let name: String
+    let age: Int
+    
+    enum CodingKeys: CodingKey {
+        case name
+        case age
     }
+}
 
 
-    func testDecodes() throws {
-        let source: [String: Any] = [
-            "name": "Josh",
-            "age": 47,
-        ]
-        let person = try Person(from: DictionaryDecoder(dictionary: source))
-        XCTAssertEqual(person.name, "Josh")
-        XCTAssertEqual(person.age, 47)
-    }
-    
-    
-    func testIgnoresExtraInfo() throws {
-        let source: [String: Any] = [
-            "name": "Josh",
-            "age": 47,
-            "favoriteRamnaCharacter": "Ryoga",
-        ]
-        let person = try Person(from: DictionaryDecoder(dictionary: source))
-        XCTAssertEqual(person.name, "Josh")
-        XCTAssertEqual(person.age, 47)
-    }
-    
-    
-    func testThrowsOnMissingInfo() {
-        let source: [String: Any] = [
-            "name": "Josh",
-        ]
-        XCTAssertThrowsError(try Person(from: DictionaryDecoder(dictionary: source))) { error in
-            guard case ContainerError.keyNotFound(let key) = error else {
-                return XCTFail("Unexpceted error")
-            }
-            XCTAssertEqual(key.stringValue, "age")
-        }
+@Test func decodes() throws {
+    let source: [String: Any] = [
+        "name": "Josh",
+        "age": 47,
+    ]
+    let person = try Person(from: DictionaryDecoder(dictionary: source))
+    #expect(person.name == "Josh")
+    #expect(person.age == 47)
+}
+
+
+@Test func ignoresExtraInfo() throws {
+    let source: [String: Any] = [
+        "name": "Josh",
+        "age": 47,
+        "favoriteRamnaCharacter": "Ryoga",
+    ]
+    let person = try Person(from: DictionaryDecoder(dictionary: source))
+    #expect(person.name == "Josh")
+    #expect(person.age == 47)
+}
+
+
+@Test func throwsOnMissingInfo() {
+    let source: [String: Any] = [
+        "name": "Josh",
+    ]
+    #expect(throws: ContainerError.keyNotFound(key: Person.CodingKeys.age)) {
+        try Person(from: DictionaryDecoder(dictionary: source))
     }
 }
